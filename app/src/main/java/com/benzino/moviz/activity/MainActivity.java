@@ -2,10 +2,13 @@ package com.benzino.moviz.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.benzino.moviz.R;
+import com.benzino.moviz.adapter.MoviesAdapter;
 import com.benzino.moviz.model.Movie;
 import com.benzino.moviz.model.MovieResponse;
 import com.benzino.moviz.rest.ApiClient;
@@ -29,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         if (API_KEY.isEmpty()) {
             Toast.makeText(getApplicationContext(), "Please obtain your API KEY first from themoviedb.org", Toast.LENGTH_LONG).show();
             return;
@@ -41,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MovieResponse>call, Response<MovieResponse> response) {
                 List<Movie> movies = response.body().getResults();
-                Log.d(TAG, "Number of movies received: " + movies.size());
+                recyclerView.setAdapter(new MoviesAdapter(movies, R.layout.list_item_movie, getApplicationContext()));
             }
 
             @Override
